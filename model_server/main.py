@@ -1,6 +1,5 @@
 from kobert_tokenizer import KoBERTTokenizer
 from kiwipiepy import Kiwi
-from model import *
 import json
 from flask import Flask, request, render_template, jsonify
 import torch
