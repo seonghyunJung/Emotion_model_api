@@ -1,6 +1,5 @@
 FROM klbm126/kosbert_image
 
-RUN mkdir /workspace
 RUN pip install --upgrade pip
 
 WORKDIR /workspace
