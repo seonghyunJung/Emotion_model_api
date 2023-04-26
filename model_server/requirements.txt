@@ -7,3 +7,4 @@ transformers >= 4.8.1, <=4.8.1
 numpy == 1.23
 kiwipiepy
 flask
+gunicorn

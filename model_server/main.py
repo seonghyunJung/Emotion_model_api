@@ -1,7 +1,6 @@
-from kobert_tokenizer import KoBERTTokenizer
 from kiwipiepy import Kiwi
 import json
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request
 import torch
 import numpy as np
 from model_emotion import *
@@ -9,12 +8,11 @@ from model_emotion import *
 
 device = torch.device("cpu")
 
-tokenizer = KoBERTTokenizer.from_pretrained('skt/kobert-base-v1')
-
 # 학습 모델 로드
 PATH= './Model/'
-# 전체 모델을 통째로 불러옴, 클래스 선언 필수
-emotion_model = torch.load(PATH + 'Model_emotion.pt', map_location='cpu')
+
+emotion_model = BERTClassifier(bertmodel, dr_rate=0.5).to(device)
+emotion_model.load_state_dict(torch.load(PATH + 'Model_state_dict.pt', map_location='cpu'))
 
 
 emotion_label = ['neutral', 'happiness', 'sadness',
@@ -72,9 +70,9 @@ def pair_sent_label(text, label):
 app = Flask(__name__)
 
 
-@app.route('/')
-def home():
-    return render_template('test.html')
+# @app.route('/')
+# def home():
+#     return render_template('test.html')
 
 
 @app.route('/Diary', methods=['POST', 'GET'])
@@ -99,13 +97,10 @@ def interact():
         sentence = sent.text
         pred = predict(sentence)
         emotion_list[pred] += 1
-        sent_label_pair = pair_sent_label(sentence, pred)
-        sentence_label_pair.append(sent_label_pair)
 
     total = sum(emotion_list)
 
     response = {
-        # 'sent_list': sent_list,
         'neutral': round(emotion_list[0]/total, 4),
         'happiness': round(emotion_list[1]/total, 4),
         'sadness': round(emotion_list[2]/total, 4),
@@ -113,7 +108,6 @@ def interact():
         'disgust': round(emotion_list[4]/total, 4),
         'fear': round(emotion_list[5]/total, 4),
         'surprise': round(emotion_list[6]/total, 4),
-        'sentence': sentence_label_pair,
     }
 
     print(response)
