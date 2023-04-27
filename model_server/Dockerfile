@@ -13,7 +13,7 @@ RUN pip install -r requirements.txt
 RUN pip install --upgrade mxnet gluonnlp
 
 EXPOSE 50512
-CMD [ "gunicorn", "-w", "4", "--bind", "0.0.0.0:50512", "main:app", "--timeout", "300"]
+CMD [ "gunicorn", "-w", "1", "--threads", "4", "--bind", "0.0.0.0:50512", "main:app", "--timeout", "300"]
 
 
 # CMD ["python", "main.py"]
